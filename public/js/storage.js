@@ -7,6 +7,8 @@ const DEFAULT_DATA = {
   tasks: [],
   sessions: [],
   streak: { count: 0, lastDate: null },
+  weeklyGoals: {},
+  monthlyGoals: {},
 };
 
 function cloneDefault() {
@@ -32,18 +34,47 @@ function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-function todayStr() {
-  const d = new Date();
+function toDateStr(d) {
   const tz = d.getTimezoneOffset() * 60000;
   return new Date(d.getTime() - tz).toISOString().slice(0, 10);
+}
+
+function todayStr() {
+  return toDateStr(new Date());
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return toDateStr(d);
+}
+
+// 월 넘어갈 때 일자 overflow로 달이 튀지 않도록 월 단위로만 계산한다.
+function addMonths(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const total = y * 12 + (m - 1) + n;
+  const newY = Math.floor(total / 12);
+  const newM = total % 12;
+  const daysInMonth = new Date(newY, newM + 1, 0).getDate();
+  const newD = Math.min(d, daysInMonth);
+  return `${newY}-${String(newM + 1).padStart(2, '0')}-${String(newD).padStart(2, '0')}`;
+}
+
+// 월요일 시작 주간 기준
+function getWeekStart(dateStr) {
+  const day = new Date(dateStr + 'T00:00:00').getDay();
+  const offset = day === 0 ? 6 : day - 1;
+  return addDays(dateStr, -offset);
+}
+
+function getMonthKey(dateStr) {
+  return dateStr.slice(0, 7);
 }
 
 function markActivity(data) {
   const today = todayStr();
   if (data.streak.lastDate === today) return;
-  const yesterday = new Date(Date.now() - 86400000);
-  const tz = yesterday.getTimezoneOffset() * 60000;
-  const yStr = new Date(yesterday.getTime() - tz).toISOString().slice(0, 10);
+  const yStr = addDays(today, -1);
   data.streak.count = data.streak.lastDate === yStr ? data.streak.count + 1 : 1;
   data.streak.lastDate = today;
 }

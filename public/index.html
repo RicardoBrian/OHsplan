@@ -17,32 +17,80 @@
   </nav>
 
   <div class="tabbar">
-    <button class="tab-btn active" data-tab="today" onclick="switchTab('today')">오늘</button>
+    <button class="tab-btn active" data-tab="plan" onclick="switchTab('plan')">플랜</button>
     <button class="tab-btn" data-tab="subjects" onclick="switchTab('subjects')">과목</button>
     <button class="tab-btn" data-tab="timer" onclick="switchTab('timer')">타이머</button>
     <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">통계</button>
   </div>
 
   <div class="wrap">
-    <!-- 오늘 -->
-    <section class="view active" id="view-today">
-      <div class="card today-header">
-        <h1 id="todayTitle"></h1>
-        <div class="today-stats">
-          <span class="stat-pill" id="todayTimeStat"></span>
-          <span class="stat-pill" id="todayStreakStat"></span>
+    <!-- 플랜 (일간/주간/월간) -->
+    <section class="view active" id="view-plan">
+      <div class="card plan-nav">
+        <div class="mode-switch">
+          <button class="mode-btn active" data-mode="day" onclick="setViewMode('day')">일간</button>
+          <button class="mode-btn" data-mode="week" onclick="setViewMode('week')">주간</button>
+          <button class="mode-btn" data-mode="month" onclick="setViewMode('month')">월간</button>
+        </div>
+        <div class="date-nav">
+          <button class="icon-btn" onclick="navigatePeriod(-1)">◀</button>
+          <button class="btn-ghost btn-today" onclick="goToday()">오늘</button>
+          <button class="icon-btn" onclick="navigatePeriod(1)">▶</button>
         </div>
       </div>
 
-      <div class="card">
-        <div class="section-label">오늘 할 일</div>
-        <div id="taskAddForm" class="form-row hidden">
-          <select class="inp" id="taskSubjectSelect"></select>
-          <input class="inp inp-text" id="taskTitleInput" type="text" placeholder="할 일을 입력하세요">
-          <button class="btn" onclick="addTask()">추가</button>
+      <!-- 일간 뷰 -->
+      <div id="dayView" class="plan-section">
+        <div class="card today-header">
+          <h1 id="dayTitle"></h1>
+          <div class="today-stats">
+            <span class="stat-pill" id="dayTimeStat"></span>
+            <span class="stat-pill" id="dayStreakStat"></span>
+          </div>
         </div>
-        <p id="taskNoSubjectHint" class="empty-state hidden" style="padding:8px 0;">먼저 <b>과목</b> 탭에서 과목을 추가해주세요.</p>
-        <div class="task-list" id="taskList"></div>
+        <div class="card">
+          <div class="section-label">할 일</div>
+          <div id="taskAddForm" class="form-row hidden">
+            <select class="inp" id="taskSubjectSelect"></select>
+            <input class="inp inp-text" id="taskTitleInput" type="text" placeholder="할 일을 입력하세요">
+            <button class="btn" onclick="addTask()">추가</button>
+          </div>
+          <p id="taskNoSubjectHint" class="empty-state hidden" style="padding:8px 0;">먼저 <b>과목</b> 탭에서 과목을 추가해주세요.</p>
+          <div class="task-list" id="taskList"></div>
+        </div>
+      </div>
+
+      <!-- 주간 뷰 -->
+      <div id="weekView" class="plan-section hidden">
+        <div class="card today-header">
+          <h1 id="weekTitle"></h1>
+          <div class="today-stats"><span class="stat-pill" id="weekTimeStat"></span></div>
+        </div>
+        <div class="card">
+          <div class="section-label">이번 주 목표</div>
+          <input class="inp" id="weeklyGoalInput" style="width:100%;" placeholder="예: 수학 문제집 1권, 영어 단어 200개" onchange="saveWeeklyGoal()">
+        </div>
+        <div class="card">
+          <div class="week-grid" id="weekGrid"></div>
+        </div>
+      </div>
+
+      <!-- 월간 뷰 -->
+      <div id="monthView" class="plan-section hidden">
+        <div class="card today-header">
+          <h1 id="monthTitle"></h1>
+          <div class="today-stats"><span class="stat-pill" id="monthTimeStat"></span></div>
+        </div>
+        <div class="card">
+          <div class="section-label">이번 달 목표</div>
+          <input class="inp" id="monthlyGoalInput" style="width:100%;" placeholder="예: 모의고사 3회, 총 60시간 학습" onchange="saveMonthlyGoal()">
+        </div>
+        <div class="card">
+          <div class="month-weekdays">
+            <span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span>
+          </div>
+          <div class="month-grid" id="monthGrid"></div>
+        </div>
       </div>
     </section>
 
