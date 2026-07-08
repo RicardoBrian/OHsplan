@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OHsplan · 스터디 플래너</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-brand">OH<span>splan</span></div>
+    <div class="nav-right">
+      <button class="dark-toggle" onclick="toggleDark()" title="다크모드"></button>
+    </div>
+  </nav>
+
+  <div class="tabbar">
+    <button class="tab-btn active" data-tab="today" onclick="switchTab('today')">오늘</button>
+    <button class="tab-btn" data-tab="subjects" onclick="switchTab('subjects')">과목</button>
+    <button class="tab-btn" data-tab="timer" onclick="switchTab('timer')">타이머</button>
+    <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">통계</button>
+  </div>
+
+  <div class="wrap">
+    <!-- 오늘 -->
+    <section class="view active" id="view-today">
+      <div class="card today-header">
+        <h1 id="todayTitle"></h1>
+        <div class="today-stats">
+          <span class="stat-pill" id="todayTimeStat"></span>
+          <span class="stat-pill" id="todayStreakStat"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-label">오늘 할 일</div>
+        <div id="taskAddForm" class="form-row hidden">
+          <select class="inp" id="taskSubjectSelect"></select>
+          <input class="inp inp-text" id="taskTitleInput" type="text" placeholder="할 일을 입력하세요">
+          <button class="btn" onclick="addTask()">추가</button>
+        </div>
+        <p id="taskNoSubjectHint" class="empty-state hidden" style="padding:8px 0;">먼저 <b>과목</b> 탭에서 과목을 추가해주세요.</p>
+        <div class="task-list" id="taskList"></div>
+      </div>
+    </section>
+
+    <!-- 과목 -->
+    <section class="view" id="view-subjects">
+      <div class="card">
+        <div class="section-label">과목 추가</div>
+        <div class="form-row">
+          <input class="inp inp-text" id="subjectNameInput" type="text" placeholder="과목 이름 (예: 수학)">
+          <button class="btn" onclick="addSubject()">추가</button>
+        </div>
+        <div class="color-picker" id="colorPicker"></div>
+      </div>
+      <div class="card">
+        <div class="section-label">내 과목</div>
+        <div class="subject-grid" id="subjectGrid"></div>
+      </div>
+    </section>
+
+    <!-- 타이머 -->
+    <section class="view" id="view-timer">
+      <p id="timerNoSubjectHint" class="card empty-state hidden">먼저 <b>과목</b> 탭에서 과목을 추가해주세요.</p>
+      <div class="card hidden" id="timerCard">
+        <div class="section-label">공부 타이머</div>
+        <select class="inp" id="timerSubjectSelect" onchange="onTimerSubjectChange()" style="width:100%;"></select>
+        <div class="timer-display">
+          <div class="timer-mode" id="timerModeLabel"></div>
+          <div class="timer-time" id="timerTime"></div>
+          <div class="timer-controls">
+            <button class="btn" id="timerStartBtn" onclick="toggleTimer()">시작</button>
+            <button class="btn btn-ghost" onclick="resetTimer()">초기화</button>
+          </div>
+        </div>
+        <div class="timer-settings">
+          <label>집중(분) <input class="inp" id="workMinInput" type="number" min="1" onchange="applyTimerSettings()"></label>
+          <label>휴식(분) <input class="inp" id="breakMinInput" type="number" min="1" onchange="applyTimerSettings()"></label>
+        </div>
+        <div class="timer-msg" id="timerMsg"></div>
+      </div>
+    </section>
+
+    <!-- 통계 -->
+    <section class="view" id="view-stats">
+      <div class="card">
+        <div class="section-label">연속 학습</div>
+        <div class="streak-badge" id="statsStreak"></div>
+      </div>
+      <div class="card">
+        <div class="section-label">이번 주 총 학습 시간</div>
+        <div class="streak-badge" id="statsWeekTotal"></div>
+        <div class="week-chart" id="weekChart"></div>
+      </div>
+      <div class="card">
+        <div class="section-label">과목별 학습 시간</div>
+        <div id="bySubjectStats"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
